@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
 @Controller()
@@ -7,18 +7,42 @@ export class AppController {
 
   @Post('board')
   async createBoard(
-    @Body() boardData: { title?: string; description: string },
+    @Body() createBoardDto: { title: string; description: string },
   ): Promise<any> {
-    this.prismaService.board.create({
+    await this.prismaService.board.create({
       data: {
-        title: boardData?.title,
-        description: boardData.description,
+        title: createBoardDto?.title,
+        description: createBoardDto.description,
       },
     });
   }
 
   @Get('board')
   async listBoard(): Promise<any> {
-    return this.prismaService.board.findMany();
+    return await this.prismaService.board.findMany();
+  }
+
+  @Patch('board')
+  async updateBoard(
+    @Body() updateBoardDto: { id: any; title: string; description: string },
+  ): Promise<any> {
+    await this.prismaService.board.update({
+      where: {
+        id: updateBoardDto.id,
+      },
+      data: {
+        title: updateBoardDto.title,
+        description: updateBoardDto.description,
+      },
+    });
+  }
+
+  @Delete('board')
+  async deleteBoard(@Body() id: any): Promise<any> {
+    await this.prismaService.board.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 }
