@@ -1,19 +1,24 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly prismaService: PrismaService) {}
 
-  @Post('signup')
-  async signup(
-    @Body() userData: { name?: string; email: string },
+  @Post('board')
+  async createBoard(
+    @Body() boardData: { title?: string; description: string },
   ): Promise<any> {
-    return this.prismaService.user.create({
+    this.prismaService.board.create({
       data: {
-        name: userData?.name,
-        email: userData.email,
+        title: boardData?.title,
+        description: boardData.description,
       },
     });
+  }
+
+  @Get('board')
+  async listBoard(): Promise<any> {
+    return this.prismaService.board.findMany();
   }
 }
